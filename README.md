@@ -2,16 +2,16 @@
 
 <p align="center">
   <a href="https://bancopan.corporate.gama.academy/" target="_blank">
-    <img align="center" width="300" src="https://github.com/Paulo-Ultra/Banco_Pan_Training/blob/main/Imagem%20Banco%20Pan.png" style="max-width:100%;">
+    <img align="center" width="300" src="./.github/img/LogoPan.png" style="max-width:100%;">
      </a>
 </p>
 <div align="center">
 
-![workflowStatus](https://github.com/ramondomiingos/pan-academy-blue-bank/actions/workflows/main.yml/badge.svg)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=ramondomiingos_pan-academy-blue-bank&metric=coverage)](https://sonarcloud.io/summary/new_code?id=ramondomiingos_pan-academy-blue-bank)
-[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=ramondomiingos_pan-academy-blue-bank&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=ramondomiingos_pan-academy-blue-bank)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=ramondomiingos_pan-academy-blue-bank&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=ramondomiingos_pan-academy-blue-bank)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=ramondomiingos_pan-academy-blue-bank&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=ramondomiingos_pan-academy-blue-bank)
+![workflowStatus](https://github.com/williamjesusdev/pan-academy-blue-bank/actions/workflows/main.yml/badge.svg)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=blue-bank-api&metric=coverage)](https://sonarcloud.io/summary/new_code?id=blue-bank-api)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=blue-bank-api&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=blue-bank-api)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=blue-bank-api&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=blue-bank-api)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=blue-bank-api&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=blue-bank-api)
 </div>
 
 
@@ -26,18 +26,16 @@ PAN ACADEMY É UM PROGRAMA DE FORMAÇÃO À ESPECIALIZAÇÃO EM <i>CLOUD</i> COM
 O programa dispõe de uma grade de estudos de cerca 390 horas de conteúdo, e é estruturado em 10 semanas de treinamento. Contendo aulas gravadas e também ao vivo, porém as aulas e
 mentorias  foram assistidas nos horários pré determinados. 
 
-* [Ementa Pan Academy](https://github.com/Paulo-Ultra/Banco_Pan_Training/blob/main/Ementa/%5BEmenta%5D%20Pan%20Academy%20-%20Java%20e%20AWS%20(Recupera%C3%A7%C3%A3o%20Autom%C3%A1tica).pdf)
+* [Ementa Pan Academy](./.github/files/[Ementa]%20Pan%20Academy.pdf)
 
  E o fechamento com um projeto final conforme o seguinte documento: 
 
-* [Desafio Final - Projeto Blue Bank](https://github.com/Paulo-Ultra/Banco_Pan_Training/blob/main/Desafio%20final%20-%20BlueBank.docx.pdf)
-
+* [Desafio Final - Projeto Blue Bank](./.github/files/[Desafio%20Final]%20BlueBank.pdf)
 
 
 ## ⚙️ Projeto Final / Repositório 
 
-- [Repositório do Projeto](https://github.com/ramondomiingos/pan-academy-blue-bank)
-
+- [Repositório do Projeto](https://github.com/williamjesusdev/pan-academy-blue-bank)
   
 
 ## ⚙️ Alunos participantes / Github
@@ -76,7 +74,7 @@ mvn clean install
 
 ## 🌐 Endpoints
 📄  As urls interativas, construídas através do [Swagger](https://swagger.io/tools/swagger-ui/), pode ser acessadas no link:
-[http://t2s7bluebank.us-east-1.elasticbeanstalk.com/](http://t2s7bluebank.us-east-1.elasticbeanstalk.com/)
+[http://http://blue-bank-squad7.herokuapp.com/](http://http://blue-bank-squad7.herokuapp.com/)
 
 | Método | URL        | Finalidade       |   
 |--------|------------|------------------|
