@@ -20,153 +20,153 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@WithMockUser(username = "test", authorities = {"ROLE_USER", "ROLE_ADMIN"})
+@WithMockUser(username = "test", authorities = { "ROLE_USER", "ROLE_ADMIN" })
 class AddressesControllerTests {
 
-    private final MockMvc mockMvc;
+  private final MockMvc mockMvc;
 
-    private final ObjectMapper objectMapper;
+  private final ObjectMapper objectMapper;
 
-    private final AddressRequest addressRequest;
+  private final AddressRequest addressRequest;
 
-    @Autowired
-    public AddressesControllerTests(MockMvc mockMvc, ObjectMapper objectMapper) {
-        this.mockMvc = mockMvc;
-        this.objectMapper = objectMapper;
-        addressRequest = new AddressRequest();
-        addressRequest.setStreet("Avenida Paulista");
-        addressRequest.setNumber("1001");
-        addressRequest.setDetails("Sala 01");
-        addressRequest.setNeighborhood("Paulista");
-        addressRequest.setZip("15370496");
-        addressRequest.setCity("São Paulo");
-        addressRequest.setState("SP");
-        addressRequest.setClientId(1L);
+  @Autowired
+  public AddressesControllerTests(MockMvc mockMvc, ObjectMapper objectMapper) {
+    this.mockMvc = mockMvc;
+    this.objectMapper = objectMapper;
+    addressRequest = new AddressRequest();
+    addressRequest.setStreet("Avenida Paulista");
+    addressRequest.setNumber("1001");
+    addressRequest.setDetails("Sala 01");
+    addressRequest.setNeighborhood("Paulista");
+    addressRequest.setZip("15370496");
+    addressRequest.setCity("São Paulo");
+    addressRequest.setState("SP");
+    addressRequest.setClientId(1L);
+  }
+
+  @Test
+  @Order(1)
+  void whenGetAddresses_thenStatus200() throws Exception {
+    mockMvc.perform(get("/addresses")
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content()
+            .contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+  }
+
+  @Test
+  @Order(2)
+  void whenPostAddresses_thenStatus201() throws Exception {
+    MvcResult result = mockMvc.perform(get("/clients/{id}", 1)).andReturn();
+    if (result.getResponse().getStatus() != 200) {
+      ClientsControllerTests cTest = new ClientsControllerTests(mockMvc, objectMapper);
+      cTest.whenPostClients_thenStatus201();
     }
+    mockMvc.perform(post("/addresses")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(addressRequest)))
+        .andExpect(status().isCreated())
+        .andExpect(content()
+            .contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+  }
 
-    @Test
-    @Order(1)
-    void whenGetAddresses_thenStatus200() throws Exception {
-        mockMvc.perform(get("/addresses")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content()
-                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-    }
+  @Test
+  @Order(3)
+  void whenGetAddressesById_thenStatus200() throws Exception {
+    mockMvc.perform(get("/addresses/{id}", 1)
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content()
+            .contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+  }
 
-    @Test
-    @Order(2)
-    void whenPostAddresses_thenStatus201() throws Exception {
-        MvcResult result = mockMvc.perform(get("/clients/{id}", 1)).andReturn();
-        if (result.getResponse().getStatus() != 200) {
-            ClientsControllerTests cTest = new ClientsControllerTests(mockMvc, objectMapper);
-            cTest.whenPostClients_thenStatus201();
-        }
-        mockMvc.perform(post("/addresses")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(addressRequest)))
-                .andExpect(status().isCreated())
-                .andExpect(content()
-                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-    }
+  @Test
+  @Order(4)
+  void whenPutAddresses_thenStatus201() throws Exception {
+    addressRequest.setStreet("Avenida Rio de Janeiro");
+    mockMvc.perform(put("/addresses/{id}", 1)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(addressRequest)))
+        .andExpect(status().isCreated())
+        .andExpect(content()
+            .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.street").value("Avenida Rio de Janeiro"));
+  }
 
-    @Test
-    @Order(3)
-    void whenGetAddressesById_thenStatus200() throws Exception {
-        mockMvc.perform(get("/addresses/{id}", 1)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content()
-                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
-    }
+  @Test
+  @Order(5)
+  void whenPostAddresses_thenStatus400() throws Exception {
+    addressRequest.setState("AAA");
+    mockMvc.perform(post("/addresses")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(addressRequest)))
+        .andExpect(status().isBadRequest())
+        .andExpect(content()
+            .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.message").exists())
+        .andExpect(jsonPath("$.message").value("Invalid Parameters"));
+  }
 
-    @Test
-    @Order(4)
-    void whenPutAddresses_thenStatus201() throws Exception {
-        addressRequest.setStreet("Avenida Rio de Janeiro");
-        mockMvc.perform(put("/addresses/{id}", 1)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(addressRequest)))
-                .andExpect(status().isCreated())
-                .andExpect(content()
-                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.street").value("Avenida Rio de Janeiro"));
-    }
+  @Test
+  @Order(6)
+  void whenPostAddresses_thenStatus404() throws Exception {
+    addressRequest.setClientId(100L);
+    addressRequest.setState("SP");
+    mockMvc.perform(post("/addresses")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(addressRequest)))
+        .andExpect(status().isNotFound())
+        .andExpect(content()
+            .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.message").exists())
+        .andExpect(jsonPath("$.message").value("client not found with id " + addressRequest.getClientId()));
+  }
 
-    @Test
-    @Order(5)
-    void whenPostAddresses_thenStatus400() throws Exception {
-        addressRequest.setState("AAA");
-        mockMvc.perform(post("/addresses")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(addressRequest)))
-                .andExpect(status().isBadRequest())
-                .andExpect(content()
-                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.message").exists())
-                .andExpect(jsonPath("$.message").value("Invalid Parameters"));
-    }
+  @Test
+  @Order(7)
+  void whenGetAddressesById_thenStatus404() throws Exception {
+    mockMvc.perform(get("/addresses/{id}", 100)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(addressRequest)))
+        .andExpect(status().isNotFound())
+        .andExpect(content()
+            .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.message").exists())
+        .andExpect(jsonPath("$.message").value("address not found with id 100"));
+  }
 
-    @Test
-    @Order(6)
-    void whenPostAddresses_thenStatus404() throws Exception {
-        addressRequest.setClientId(100L);
-        addressRequest.setState("SP");
-        mockMvc.perform(post("/addresses")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(addressRequest)))
-                .andExpect(status().isNotFound())
-                .andExpect(content()
-                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.message").exists())
-                .andExpect(jsonPath("$.message").value("client not found with id " + addressRequest.getClientId()));
-    }
+  @Test
+  @Order(8)
+  void whenPutAddresses_thenStatus404() throws Exception {
+    addressRequest.setStreet("Avenida Brasília");
+    addressRequest.setClientId(1L);
+    mockMvc.perform(put("/addresses/{id}", 100)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(addressRequest)))
+        .andExpect(status().isNotFound())
+        .andExpect(content()
+            .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.message").exists())
+        .andExpect(jsonPath("$.message").value("address not found with id 100"));
+  }
 
-    @Test
-    @Order(7)
-    void whenGetAddressesById_thenStatus404() throws Exception {
-        mockMvc.perform(get("/addresses/{id}", 100)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(addressRequest)))
-                .andExpect(status().isNotFound())
-                .andExpect(content()
-                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.message").exists())
-                .andExpect(jsonPath("$.message").value("address not found with id 100"));
-    }
+  @Test
+  @Order(9)
+  void whenDeleteAddresses_thenStatus404() throws Exception {
+    mockMvc.perform(delete("/addresses/{id}", 100)
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNotFound())
+        .andExpect(content()
+            .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.message").exists())
+        .andExpect(jsonPath("$.message").value("address not found with id 100"));
+  }
 
-    @Test
-    @Order(8)
-    void whenPutAddresses_thenStatus404() throws Exception {
-        addressRequest.setStreet("Avenida Brasília");
-        addressRequest.setClientId(1L);
-        mockMvc.perform(put("/addresses/{id}", 100)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(addressRequest)))
-                .andExpect(status().isNotFound())
-                .andExpect(content()
-                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.message").exists())
-                .andExpect(jsonPath("$.message").value("address not found with id 100"));
-    }
-
-    @Test
-    @Order(9)
-    void whenDeleteAddresses_thenStatus404() throws Exception {
-        mockMvc.perform(delete("/addresses/{id}", 100)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andExpect(content()
-                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.message").exists())
-                .andExpect(jsonPath("$.message").value("address not found with id 100"));
-    }
-
-    @Test
-    @Order(10)
-    void whenDeleteAddresses_thenStatus204() throws Exception {
-        mockMvc.perform(delete("/addresses/{id}", 1)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
-    }
+  @Test
+  @Order(10)
+  void whenDeleteAddresses_thenStatus204() throws Exception {
+    mockMvc.perform(delete("/addresses/{id}", 1)
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNoContent());
+  }
 }

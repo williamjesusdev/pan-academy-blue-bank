@@ -27,50 +27,50 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AuthControllerTests {
 
-    private final MockMvc mockMvc;
+  private final MockMvc mockMvc;
 
-    private final ObjectMapper objectMapper;
+  private final ObjectMapper objectMapper;
 
-    private final UsersRepository repository;
+  private final UsersRepository repository;
 
-    private final LoginRequest loginRequest;
+  private final LoginRequest loginRequest;
 
-    @Autowired
-     AuthControllerTests(MockMvc mockMvc, ObjectMapper objectMapper, JwtUtils jwtUtils, UsersRepository repository) {
-        this.mockMvc = mockMvc;
-        this.objectMapper = objectMapper;
-        this.repository = repository;
-        loginRequest = new LoginRequest("admin", "admin");
+  @Autowired
+  AuthControllerTests(MockMvc mockMvc, ObjectMapper objectMapper, JwtUtils jwtUtils, UsersRepository repository) {
+    this.mockMvc = mockMvc;
+    this.objectMapper = objectMapper;
+    this.repository = repository;
+    loginRequest = new LoginRequest("admin", "admin");
+  }
+
+  @BeforeAll
+  void setUp() {
+    Optional<User> optional = repository.findByUsername(loginRequest.getUsername());
+    if (optional.isEmpty()) {
+      User user = new User();
+      user.setUsername(loginRequest.getUsername());
+      user.setPassword(new BCryptPasswordEncoder().encode(loginRequest.getPassword()));
+      user.setRole(RoleType.A);
+      repository.save(user);
     }
+  }
 
-    @BeforeAll
-    void setUp(){
-        Optional<User> optional = repository.findByUsername(loginRequest.getUsername());
-        if(optional.isEmpty()){
-            User user = new User();
-            user.setUsername(loginRequest.getUsername());
-            user.setPassword(new BCryptPasswordEncoder().encode(loginRequest.getPassword()));
-            user.setRole(RoleType.A);
-            repository.save(user);
-        }
-    }
+  @Test
+  @Order(1)
+  void whenGetAuthWithCorrectPassword_thenStatus200() throws Exception {
+    mockMvc.perform(post("/auth/login")
+        .content(objectMapper.writeValueAsString(loginRequest))
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+  }
 
-    @Test
-    @Order(1)
-     void whenGetAuthWithCorrectPassword_thenStatus200() throws Exception {
-        mockMvc.perform(post("/auth/login")
-                        .content(objectMapper.writeValueAsString(loginRequest))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    @Order(2)
-     void whenGetAuthWithIncorrectPassword_thenStatus403() throws Exception {
-        loginRequest.setPassword("password");
-        mockMvc.perform(post("/auth/login")
-                        .content(objectMapper.writeValueAsString(loginRequest))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isForbidden());
-    }
+  @Test
+  @Order(2)
+  void whenGetAuthWithIncorrectPassword_thenStatus403() throws Exception {
+    loginRequest.setPassword("password");
+    mockMvc.perform(post("/auth/login")
+        .content(objectMapper.writeValueAsString(loginRequest))
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isForbidden());
+  }
 }
